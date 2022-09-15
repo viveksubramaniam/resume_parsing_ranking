@@ -2,7 +2,7 @@ import os
 from flask import Flask, flash, request, redirect, render_template,url_for
 from constants import file_constants as cnst
 from processing import resume_matcher
-from preprocessing import docx_to_text
+# from preprocessing import docx_to_text
 from utils import file_utils
 
 
@@ -46,23 +46,25 @@ def check_for_file():
             flash('Select atleast one resume file to proceed further')
             return redirect(request.url)
         if ((file and allowed_file(file.filename)) and (len(resume_files) > 0)):
-           #filename = secure_filename(file.filename)
-           abs_paths = []
-           filename = file.filename
-           req_document = cnst.UPLOAD_FOLDER+'\\'+filename
-           file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-           for resumefile in resume_files:
-               filename = resumefile.filename
-               abs_paths.append(cnst.UPLOAD_FOLDER + '\\' + filename)
-               resumefile.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-           result = resume_matcher.process_files(req_document,abs_paths)
-           for file_path in abs_paths:
-               file_utils.delete_file(file_path)
+            #filename = secure_filename(file.filename)
+            abs_paths = []
+            filename = file.filename
+            req_document = cnst.UPLOAD_FOLDER+'\\'+filename
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            for resumefile in resume_files:
+                filename = resumefile.filename
+                abs_paths.append(cnst.UPLOAD_FOLDER + '\\' + filename)
+                resumefile.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            result, prim, secon = resume_matcher.process_files(req_document,abs_paths)
+            for file_path in abs_paths:
+                file_utils.delete_file(file_path)
+            os.remove(prim)
+            os.remove(secon)    
 
-           return render_template("resume_results.html", result=result)
+            return render_template("resume_results.html", result=result)
         else:
-           flash('Allowed file types are txt, pdf, png, jpg, jpeg, gif')
-           return redirect(request.url)
+            flash('Allowed file types are txt, pdf, png, jpg, jpeg, gif')
+            return redirect(request.url)
 
 if __name__ == "__main__":
     app.run(debug = True)
