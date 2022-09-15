@@ -1,3 +1,4 @@
+from math import cos
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from nltk.stem.wordnet import WordNetLemmatizer
@@ -21,7 +22,12 @@ def get_tf_idf_cosine_similarity(compare_doc,doc_corpus):
     #tf_idf_resume_vector = tf_idf_vect.transform([compare_doc]).todense()
     cosine_similarity_list = []
     for i in range(len(tf_idf_resume_vector)):
-        cosine_similarity_list.append(cosine_similarity(tf_idf_req_vector,tf_idf_resume_vector[i])[0][0])
+        cosSimilarity = cosine_similarity(tf_idf_req_vector,tf_idf_resume_vector[i])[0][0]
+        # if(cosSimilarity < 0.42):
+        #     cosSimilarity *= 0.5
+        # else:
+        #     cosSimilarity *= 1.5
+        cosine_similarity_list.append(cosSimilarity)
     # for i in range(len(tf_idf_req_vector)):
     #   cosine_similarity_list.append(cosine_similarity(tf_idf_resume_vector,tf_idf_req_vector[i])[0][0])
     return cosine_similarity_list
@@ -43,7 +49,12 @@ def get_tf_cosine_similarity(compare_doc,doc_corpus):
     tf_idf_resume_vector = tf_idf_vect.transform(doc_corpus).todense()
     cosine_similarity_list = []
     for i in range(len(tf_idf_resume_vector)):
-        cosine_similarity_list.append(cosine_similarity(tf_idf_req_vector,tf_idf_resume_vector[i])[0][0])
+        cosSimilarity = cosine_similarity(tf_idf_req_vector,tf_idf_resume_vector[i])[0][0]
+        if(cosSimilarity < 0.42):
+            cosSimilarity *= 0.5
+        else:
+            cosSimilarity *= 1.5
+        cosine_similarity_list.append(cosSimilarity)
     return cosine_similarity_list
 
 
